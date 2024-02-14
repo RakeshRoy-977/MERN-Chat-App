@@ -5,7 +5,9 @@ const getJwt = require("../utils/GetJwt");
 const signUp = async (req, res, next) => {
   try {
     const { fullName, email, password, gender } = req.body;
+
     const CheckUser = await AuthModel.findOne({ email });
+
     if (CheckUser) {
       return res.json(`User already exits`);
     }
@@ -29,11 +31,11 @@ const signUp = async (req, res, next) => {
       res.json({
         _id: newUser._id,
         fullName: newUser.fullName,
-        username: newUser.username,
+        email: newUser.email,
         profilePic: newUser.profilePic,
       });
     } else {
-      res.json(`Please Fill details`);
+      return res.json(`Please Fill details`);
     }
   } catch (error) {
     return res.json(error.message);
@@ -43,6 +45,26 @@ const signUp = async (req, res, next) => {
 //login
 const login = async (req, res, next) => {
   try {
+    const { email, password } = req.body;
+
+    const CheckUser = await AuthModel.findOne({ email });
+    if (!CheckUser) {
+      return res.json(`User dosnt exits`);
+    }
+
+    const comparePassword = await bcrypt.compare(password, CheckUser.password);
+    if (!comparePassword) {
+      return res.json(`wrong information`);
+    }
+
+    getJwt(CheckUser._id, res); //getting jwt
+
+    res.json({
+      _id: CheckUser._id,
+      fullName: CheckUser.fullName,
+      email: CheckUser.email,
+      profilePic: CheckUser.profilePic,
+    });
   } catch (error) {
     return res.json(error.message);
   }
@@ -51,6 +73,8 @@ const login = async (req, res, next) => {
 //logout
 const logout = async (req, res, next) => {
   try {
+    res.cookie("jwt", "", { maxAge: 0 });
+    res.json(`Logged out successfully`);
   } catch (error) {
     return res.json(error.message);
   }
