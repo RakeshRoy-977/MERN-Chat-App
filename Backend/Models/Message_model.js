@@ -7,7 +7,7 @@ const MessageSchema = mongoose.Schema(
       ref: "Auth",
       required: true,
     },
-    recevierID: {
+    receiverID: {
       type: mongoose.Types.ObjectId,
       ref: "Auth",
       required: true,

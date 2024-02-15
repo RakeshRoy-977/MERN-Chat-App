@@ -6,7 +6,6 @@ const conversationSchema = mongoose.Schema(
       {
         type: mongoose.Types.ObjectId,
         ref: "Auth",
-        required: true,
       },
     ],
     messages: [
@@ -20,5 +19,5 @@ const conversationSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const MessageModel = mongoose.model("Message", MessageSchema);
-module.exports = MessageModel;
+const ConversationModel = mongoose.model("Conversation", conversationSchema);
+module.exports = ConversationModel;
